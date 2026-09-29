@@ -1,0 +1,15 @@
+{
+  "name": "robot-relay-server",
+  "version": "1.0.0",
+  "description": "Relay server: ESP32-CAM POSTs JPEG frames here, the Android app reads the latest one over HTTP or WebSocket.",
+  "main": "server.js",
+  "type": "commonjs",
+  "scripts": {
+    "start": "node server.js"
+  },
+  "engines": { "node": ">=18" },
+  "dependencies": {
+    "express": "^4.19.2",
+    "ws": "^8.18.0"
+  }
+}
