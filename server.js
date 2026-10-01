@@ -110,13 +110,16 @@ wss.on('connection', (ws, req) => {
   if (!subscribers.has(deviceId)) subscribers.set(deviceId, new Set());
   subscribers.get(deviceId).add(ws);
 
-  // Send the most recent frame immediately so the app doesn't wait for the next POST
   const entry = latestFrames.get(deviceId);
   if (entry && Date.now() - entry.ts <= STALE_MS) ws.send(entry.buffer);
 
-  ws.on('close', () => subscribers.get(deviceId)?.delete(ws));
-});
+  const pingInterval = setInterval(() => {          // ADD THIS BLOCK
+    if (ws.readyState === ws.OPEN) ws.ping();
+    else clearInterval(pingInterval);
+  }, 20000);
 
-server.listen(PORT, () => {
-  console.log(`Relay server listening on :${PORT}`);
+  ws.on('close', () => {
+    clearInterval(pingInterval);                      // ADD THIS LINE
+    subscribers.get(deviceId)?.delete(ws);
+  });
 });
